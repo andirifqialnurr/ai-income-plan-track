@@ -95,3 +95,17 @@ Day 2 seharusnya membuat halaman penawaran satu halaman:
 - Garansi setup 72 jam.
 - Form interest sederhana.
 
+## Update Day 2
+
+Tanggal kerja: 2026-06-01
+
+File yang dibuat:
+
+- `offer-page.html` - halaman penawaran satu halaman untuk DetailBot Quote Assistant.
+- `offer-copy-id.md` - versi copy Bahasa Indonesia untuk prospek lokal.
+- `assets/detailbot-hero.png` - visual hero untuk offer page.
+
+Catatan:
+
+- Halaman bisa dibuka langsung dari file lokal.
+- Sebelum dikirim ke prospek sungguhan, ganti `contactEmail` di `offer-page.html` dengan email penerima demo request yang benar.

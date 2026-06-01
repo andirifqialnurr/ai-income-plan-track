@@ -25,24 +25,24 @@ Tujuan 30 hari:
 
 Output utama:
 
-- [ ] Buat halaman penawaran satu halaman untuk DetailBot Quote Assistant.
-- [ ] Tulis headline yang jelas.
-- [ ] Tulis 3 value bullet:
-  - [ ] Balas quote request lebih cepat.
-  - [ ] Tanyakan detail yang kurang secara otomatis.
-  - [ ] Simpan ringkasan lead dan follow-up.
-- [ ] Tambahkan CTA demo.
-- [ ] Cantumkan harga founding install: USD 349.
-- [ ] Cantumkan maintenance opsional: USD 79/month.
-- [ ] Tambahkan garansi setup 72 jam.
-- [ ] Tambahkan form interest sederhana.
-- [ ] Buat versi copy Bahasa Indonesia sebagai cadangan untuk prospek lokal.
+- [x] Buat halaman penawaran satu halaman untuk DetailBot Quote Assistant.
+- [x] Tulis headline yang jelas.
+- [x] Tulis 3 value bullet:
+  - [x] Balas quote request lebih cepat.
+  - [x] Tanyakan detail yang kurang secara otomatis.
+  - [x] Simpan ringkasan lead dan follow-up.
+- [x] Tambahkan CTA demo.
+- [x] Cantumkan harga founding install: USD 349.
+- [x] Cantumkan maintenance opsional: USD 79/month.
+- [x] Tambahkan garansi setup 72 jam.
+- [x] Tambahkan form interest sederhana.
+- [x] Buat versi copy Bahasa Indonesia sebagai cadangan untuk prospek lokal.
 
 Kriteria selesai:
 
-- [ ] Halaman bisa dibuka lokal atau deploy sederhana.
-- [ ] Copy cukup jelas untuk dikirim ke prospek tanpa penjelasan tambahan.
-- [ ] Ada CTA tunggal: minta demo atau call singkat.
+- [x] Halaman bisa dibuka lokal atau deploy sederhana.
+- [x] Copy cukup jelas untuk dikirim ke prospek tanpa penjelasan tambahan.
+- [x] Ada CTA tunggal: minta demo atau call singkat.
 
 ## Day 3 - Demo Minimal
 

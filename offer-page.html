@@ -1,0 +1,709 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DetailBot Quote Assistant</title>
+    <meta
+      name="description"
+      content="A simple AI quote assistant for mobile detailers that replies fast, asks missing questions, and keeps every lead organized."
+    />
+    <style>
+      :root {
+        --ink: #121417;
+        --muted: #5f6872;
+        --line: #d8dde3;
+        --paper: #f6f4ef;
+        --surface: #ffffff;
+        --accent: #0f766e;
+        --accent-dark: #0b4f4a;
+        --lime: #9bc64a;
+        --amber: #d9942f;
+        --shadow: 0 22px 60px rgba(18, 20, 23, 0.18);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background: var(--paper);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.5;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .site-header {
+        position: fixed;
+        z-index: 10;
+        top: 0;
+        right: 0;
+        left: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        padding: 16px clamp(18px, 5vw, 64px);
+        color: #ffffff;
+        background: rgba(18, 20, 23, 0.44);
+        backdrop-filter: blur(14px);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 800;
+      }
+
+      .brand-mark {
+        display: grid;
+        width: 34px;
+        height: 34px;
+        place-items: center;
+        border: 1px solid rgba(255, 255, 255, 0.44);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.12);
+        color: var(--lime);
+        font-size: 18px;
+      }
+
+      .top-cta {
+        display: inline-flex;
+        min-height: 42px;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(255, 255, 255, 0.42);
+        border-radius: 8px;
+        padding: 10px 15px;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      .hero {
+        position: relative;
+        min-height: 88vh;
+        display: grid;
+        align-items: end;
+        padding: 112px clamp(18px, 5vw, 64px) 54px;
+        overflow: hidden;
+        color: #ffffff;
+        background: #111;
+      }
+
+      .hero::before {
+        position: absolute;
+        inset: 0;
+        content: "";
+        background:
+          linear-gradient(90deg, rgba(8, 11, 13, 0.9) 0%, rgba(8, 11, 13, 0.72) 38%, rgba(8, 11, 13, 0.18) 75%),
+          linear-gradient(0deg, rgba(8, 11, 13, 0.65) 0%, rgba(8, 11, 13, 0) 42%),
+          url("assets/detailbot-hero.png") center / cover no-repeat;
+      }
+
+      .hero-content {
+        position: relative;
+        max-width: 760px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        margin: 0 0 18px;
+        color: #dcebd1;
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+
+      .eyebrow::before {
+        width: 30px;
+        height: 3px;
+        border-radius: 999px;
+        background: var(--lime);
+        content: "";
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        max-width: 720px;
+        margin-bottom: 18px;
+        font-size: clamp(46px, 8vw, 84px);
+        line-height: 0.97;
+        letter-spacing: 0;
+      }
+
+      .hero-lede {
+        max-width: 650px;
+        margin-bottom: 26px;
+        color: #e7eaed;
+        font-size: clamp(18px, 2vw, 23px);
+      }
+
+      .hero-actions,
+      .section-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .button {
+        display: inline-flex;
+        min-height: 50px;
+        align-items: center;
+        justify-content: center;
+        border: 0;
+        border-radius: 8px;
+        padding: 13px 18px;
+        cursor: pointer;
+        font: inherit;
+        font-weight: 850;
+        text-decoration: none;
+        transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+      }
+
+      .button:hover {
+        transform: translateY(-1px);
+      }
+
+      .button-primary {
+        background: var(--lime);
+        color: #111;
+        box-shadow: 0 14px 32px rgba(155, 198, 74, 0.26);
+      }
+
+      .button-dark {
+        background: var(--ink);
+        color: #ffffff;
+      }
+
+      .button-ghost {
+        border: 1px solid rgba(255, 255, 255, 0.44);
+        color: #ffffff;
+      }
+
+      .hero-proof {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 28px;
+      }
+
+      .proof-pill {
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        border-radius: 999px;
+        padding: 9px 12px;
+        background: rgba(255, 255, 255, 0.1);
+        color: #f2f5f0;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .band {
+        padding: clamp(56px, 8vw, 96px) clamp(18px, 5vw, 64px);
+      }
+
+      .band-light {
+        background: var(--paper);
+      }
+
+      .band-white {
+        background: var(--surface);
+      }
+
+      .section-head {
+        max-width: 790px;
+        margin-bottom: 28px;
+      }
+
+      .section-head h2 {
+        margin-bottom: 12px;
+        font-size: clamp(32px, 5vw, 54px);
+        line-height: 1.02;
+        letter-spacing: 0;
+      }
+
+      .section-head p {
+        color: var(--muted);
+        font-size: 18px;
+      }
+
+      .value-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .value-card,
+      .feature-card,
+      .price-panel,
+      .form-panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+      }
+
+      .value-card {
+        min-height: 220px;
+        padding: 24px;
+      }
+
+      .metric {
+        display: grid;
+        width: 44px;
+        height: 44px;
+        place-items: center;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        background: #e6f2d1;
+        color: var(--accent-dark);
+        font-weight: 900;
+      }
+
+      .value-card h3,
+      .feature-card h3 {
+        margin-bottom: 9px;
+        font-size: 21px;
+        line-height: 1.2;
+      }
+
+      .value-card p,
+      .feature-card p,
+      .price-panel p {
+        color: var(--muted);
+      }
+
+      .split {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(320px, 0.78fr);
+        gap: clamp(24px, 5vw, 64px);
+        align-items: start;
+      }
+
+      .feature-list {
+        display: grid;
+        gap: 14px;
+      }
+
+      .feature-card {
+        display: grid;
+        grid-template-columns: 42px minmax(0, 1fr);
+        gap: 14px;
+        padding: 18px;
+      }
+
+      .feature-icon {
+        display: grid;
+        width: 42px;
+        height: 42px;
+        place-items: center;
+        border-radius: 8px;
+        background: #f0eadf;
+        color: var(--amber);
+        font-weight: 900;
+      }
+
+      .price-panel {
+        position: sticky;
+        top: 88px;
+        padding: 26px;
+        box-shadow: var(--shadow);
+      }
+
+      .price-label {
+        margin-bottom: 8px;
+        color: var(--accent);
+        font-size: 13px;
+        font-weight: 900;
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+
+      .price {
+        display: flex;
+        align-items: end;
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+
+      .price strong {
+        font-size: clamp(46px, 7vw, 68px);
+        line-height: 0.95;
+      }
+
+      .price span {
+        padding-bottom: 9px;
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      .included {
+        display: grid;
+        gap: 10px;
+        margin: 22px 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .included li {
+        display: grid;
+        grid-template-columns: 18px minmax(0, 1fr);
+        gap: 10px;
+        color: #2d333a;
+      }
+
+      .included li::before {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--accent);
+        color: #ffffff;
+        content: "✓";
+        font-size: 12px;
+        font-weight: 900;
+        line-height: 18px;
+        text-align: center;
+      }
+
+      .guarantee {
+        margin-top: 18px;
+        border-left: 4px solid var(--lime);
+        padding: 13px 0 13px 16px;
+        color: #34404b;
+        font-weight: 760;
+      }
+
+      .form-wrap {
+        display: grid;
+        grid-template-columns: minmax(0, 0.85fr) minmax(320px, 1fr);
+        gap: clamp(24px, 5vw, 64px);
+        align-items: start;
+      }
+
+      .form-panel {
+        padding: 24px;
+      }
+
+      form {
+        display: grid;
+        gap: 14px;
+      }
+
+      label {
+        display: grid;
+        gap: 7px;
+        color: #28313a;
+        font-size: 14px;
+        font-weight: 800;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        min-height: 46px;
+        border: 1px solid #cbd2da;
+        border-radius: 8px;
+        padding: 11px 12px;
+        color: var(--ink);
+        background: #ffffff;
+        font: inherit;
+      }
+
+      textarea {
+        min-height: 112px;
+        resize: vertical;
+      }
+
+      .status {
+        min-height: 24px;
+        color: var(--accent-dark);
+        font-size: 14px;
+        font-weight: 800;
+      }
+
+      .footer {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 28px clamp(18px, 5vw, 64px);
+        color: #eff2f4;
+        background: var(--ink);
+        font-size: 14px;
+      }
+
+      @media (max-width: 900px) {
+        .site-header {
+          position: absolute;
+        }
+
+        .hero {
+          min-height: auto;
+          padding-top: 102px;
+        }
+
+        h1 {
+          font-size: 46px;
+        }
+
+        .value-grid,
+        .split,
+        .form-wrap {
+          grid-template-columns: 1fr;
+        }
+
+        .price-panel {
+          position: static;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .site-header {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .top-cta,
+        .button,
+        .hero-actions,
+        .section-actions {
+          width: 100%;
+        }
+
+        .button,
+        .top-cta {
+          text-align: center;
+        }
+
+        .hero::before {
+          background:
+            linear-gradient(90deg, rgba(8, 11, 13, 0.93) 0%, rgba(8, 11, 13, 0.74) 100%),
+            url("assets/detailbot-hero.png") center / cover no-repeat;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="brand" aria-label="DetailBot Quote Assistant">
+        <span class="brand-mark">D</span>
+        <span>DetailBot Quote Assistant</span>
+      </div>
+      <a class="top-cta" href="#demo">Request demo</a>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-content">
+          <p class="eyebrow">For mobile auto detailers</p>
+          <h1>DetailBot Quote Assistant</h1>
+          <p class="hero-lede">
+            A simple AI quote assistant that replies to new detail requests fast, asks the missing questions, and sends you a clean lead summary before the inquiry goes cold.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#demo">Get a 60-second demo</a>
+            <a class="button button-ghost" href="#included">See what is included</a>
+          </div>
+          <div class="hero-proof" aria-label="Offer highlights">
+            <span class="proof-pill">$349 founding install</span>
+            <span class="proof-pill">72-hour setup guarantee</span>
+            <span class="proof-pill">$79/month optional maintenance</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="band band-light" id="included">
+        <div class="section-head">
+          <h2>Turn quote requests into organized leads.</h2>
+          <p>
+            DetailBot gives owner-operators a faster first response without replacing the personal follow-up that closes premium jobs.
+          </p>
+        </div>
+        <div class="value-grid">
+          <article class="value-card">
+            <div class="metric">1</div>
+            <h3>Reply faster</h3>
+            <p>
+              New quote requests get a clear first response while you are detailing, driving, or finishing the current job.
+            </p>
+          </article>
+          <article class="value-card">
+            <div class="metric">2</div>
+            <h3>Ask what is missing</h3>
+            <p>
+              It asks for vehicle type, location, service, condition, timing, and photos when the request is too vague to quote.
+            </p>
+          </article>
+          <article class="value-card">
+            <div class="metric">3</div>
+            <h3>Keep follow-up clean</h3>
+            <p>
+              Every lead is summarized for the owner, stored in a simple dashboard, and ready for the next follow-up.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="band band-white">
+        <div class="split">
+          <div>
+            <div class="section-head">
+              <h2>Built around your current quote flow.</h2>
+              <p>
+                Use your existing website, a new branded quote form, or a simple link you can send from Instagram, Google Business Profile, SMS, or email.
+              </p>
+            </div>
+            <div class="feature-list">
+              <article class="feature-card">
+                <span class="feature-icon">Q</span>
+                <div>
+                  <h3>Branded quote form</h3>
+                  <p>Collect name, phone, location, vehicle details, service interest, condition notes, and optional photos.</p>
+                </div>
+              </article>
+              <article class="feature-card">
+                <span class="feature-icon">A</span>
+                <div>
+                  <h3>AI reply logic</h3>
+                  <p>Send a useful first reply and ask only the questions needed to qualify the job.</p>
+                </div>
+              </article>
+              <article class="feature-card">
+                <span class="feature-icon">L</span>
+                <div>
+                  <h3>Lead summary</h3>
+                  <p>See the request in plain English so you can quote, call, or decline without digging through messages.</p>
+                </div>
+              </article>
+              <article class="feature-card">
+                <span class="feature-icon">F</span>
+                <div>
+                  <h3>Follow-up messages</h3>
+                  <p>Use ready-to-send reminders for leads who ask for pricing but do not book right away.</p>
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <aside class="price-panel" aria-label="Founding install price">
+            <p class="price-label">Founding install</p>
+            <div class="price">
+              <strong>$349</strong>
+              <span>one-time setup</span>
+            </div>
+            <p>
+              Built for three detailers this month while the offer is still founder-led and easy to customize.
+            </p>
+            <ul class="included">
+              <li>Branded quote assistant setup</li>
+              <li>AI first reply and missing-question flow</li>
+              <li>Simple lead dashboard</li>
+              <li>Three follow-up message templates</li>
+              <li>Optional maintenance after month one: $79/month</li>
+            </ul>
+            <a class="button button-dark" href="#demo">Request your demo</a>
+            <div class="guarantee">Setup guarantee: your first working version is ready within 72 hours after intake.</div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="band band-light" id="demo">
+        <div class="form-wrap">
+          <div class="section-head">
+            <h2>Want to see it with your detailing business?</h2>
+            <p>
+              Send a website or booking link and get a short personalized walkthrough showing how DetailBot would respond to your real quote requests.
+            </p>
+            <div class="section-actions">
+              <a class="button button-dark" href="mailto:yourname@example.com?subject=DetailBot%20demo%20request">Email directly</a>
+            </div>
+          </div>
+
+          <div class="form-panel">
+            <form id="interestForm">
+              <label>
+                Name
+                <input name="name" autocomplete="name" required />
+              </label>
+              <label>
+                Business name
+                <input name="business" autocomplete="organization" required />
+              </label>
+              <label>
+                Email or phone
+                <input name="contact" autocomplete="email" required />
+              </label>
+              <label>
+                Website or booking link
+                <input name="website" autocomplete="url" />
+              </label>
+              <label>
+                Biggest lead issue
+                <select name="issue">
+                  <option>Slow replies</option>
+                  <option>Incomplete quote requests</option>
+                  <option>Missed follow-ups</option>
+                  <option>Too many scattered messages</option>
+                </select>
+              </label>
+              <label>
+                Notes
+                <textarea name="notes" placeholder="Example: ceramic coating leads, interior details, fleet requests"></textarea>
+              </label>
+              <button class="button button-primary" type="submit">Request a 60-second demo</button>
+              <div class="status" id="formStatus" role="status" aria-live="polite"></div>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>DetailBot Quote Assistant</span>
+      <span>Fast replies. Better qualification. Cleaner follow-up.</span>
+    </footer>
+
+    <script>
+      const contactEmail = "yourname@example.com";
+      const form = document.querySelector("#interestForm");
+      const status = document.querySelector("#formStatus");
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const data = new FormData(form);
+        const subject = `DetailBot demo request - ${data.get("business") || "new lead"}`;
+        const body = [
+          `Name: ${data.get("name")}`,
+          `Business: ${data.get("business")}`,
+          `Contact: ${data.get("contact")}`,
+          `Website: ${data.get("website")}`,
+          `Lead issue: ${data.get("issue")}`,
+          "",
+          `Notes: ${data.get("notes")}`
+        ].join("\n");
+
+        window.location.href = `mailto:${contactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        status.textContent = "Demo request drafted in your email app.";
+      });
+    </script>
+  </body>
+</html>
